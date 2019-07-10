@@ -1,13 +1,33 @@
-const express = "express";
+const express = require("express");
 const db = require("./userDb");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {});
+router.post("/", validateUser, (req, res) => {
+  try {
+    db.insert(req.body).then(data => {
+      return res.status(201).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
 
 router.post("/:id/posts", (req, res) => {});
 
-router.get("/", (req, res) => {});
+router.get("/", (req, res) => {
+  try {
+    db.get(req.body).then(data => {
+      return res.status(200).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
 
 router.get("/:id", (req, res) => {});
 
@@ -33,6 +53,7 @@ function validateUserId(req, res, next) {
           message: "invalid user id"
         });
       }
+      req.user = id;
       next();
     });
   } catch (err) {
@@ -55,14 +76,14 @@ function validateUser(req, res, next) {
 }
 
 function validatePost(req, res, next) {
-  const { post } = req.body;
+  const { text } = req.body;
   if (!req.body) {
     return res.status(400).json({
       message: "missing user data"
     });
-  } else if (!post) {
+  } else if (!text) {
     return res.status(400).json({
-      message: "missing required post field"
+      message: "missing required text field"
     });
   }
   next();

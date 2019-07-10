@@ -27,6 +27,7 @@ function validatePostId(req, res, next) {
           message: "invalid post id"
         });
       }
+      req.postId = id;
       next();
     });
   } catch (err) {
