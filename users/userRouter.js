@@ -33,15 +33,27 @@ router.get("/:id", (req, res) => {});
 
 router.get("/:id/posts", (req, res) => {});
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", (req, res) => {
+    
+});
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", validateUserId, validateUser, (req, res) => {
+  try {
+    db.update(req.user, req.body).then(data => {
+      return res.status(201).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
 
 //custom middleware
 
 function validateUserId(req, res, next) {
   const { id } = req.params;
-  if (!id || !isNaN(id)) {
+  if (!id || isNaN(id)) {
     return res.status(400).json({
       message: "invalid user id"
     });

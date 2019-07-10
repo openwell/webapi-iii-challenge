@@ -12,3 +12,11 @@ POST http://localhost:4000/api/user HTTP/1.1
 
 ### 
 GET http://localhost:4000/api/user 
+
+### 
+PUT http://localhost:4000/api/user/10 HTTP/1.1
+  content-type: application/json 
+
+  {
+    "name": "Tom Bradlys"   
+  }
