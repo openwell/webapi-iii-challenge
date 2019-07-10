@@ -22,7 +22,7 @@ router.put("/:id", (req, res) => {});
 function validateUserId(req, res, next) {
   const { id } = req.params;
   if (!id || !isNaN(id)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "invalid user id"
     });
   }
@@ -33,15 +33,26 @@ function validateUserId(req, res, next) {
           message: "invalid user id"
         });
       }
-      next()
+      next();
     });
   } catch (err) {
     res.status(500).send(err);
   }
-  next();
 }
 
-function validateUser(req, res, next) {}
+function validateUser(req, res, next) {
+  const { name } = req.body;
+  if (!req.body) {
+    return res.status(400).json({
+      message: "missing user data"
+    });
+  } else if (!name) {
+    return res.status(400).json({
+      message: "missing required name field"
+    });
+  }
+  next();
+}
 
 function validatePost(req, res, next) {}
 
