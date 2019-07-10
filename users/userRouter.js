@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("./userDb");
+const db2 = require("../posts/postDb")
 
 const router = express.Router();
 
@@ -15,7 +16,17 @@ router.post("/", validateUser, (req, res) => {
   }
 });
 
-router.post("/:id/posts", (req, res) => {});
+router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+  try {
+    db2.insert({user_id: req.user, text: req.body.text}).then(data => {
+      return res.status(201).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
 
 router.get("/", (req, res) => {
   try {
@@ -68,7 +79,7 @@ function validateUserId(req, res, next) {
   }
   try {
     db.getById(id).then(data => {
-      if (data === undefined || data.length === 0 ) {
+      if (data === undefined || data.length === 0) {
         return res.status(400).json({
           message: "invalid user id"
         });
