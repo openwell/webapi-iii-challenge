@@ -3,7 +3,17 @@ const db = require("./postDb");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {});
+router.get("/", (req, res) => {
+  try {
+    db.get().then(data => {
+      return res.status(200).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 router.get("/:id", (req, res) => {});
 
@@ -22,7 +32,7 @@ function validatePostId(req, res, next) {
   }
   try {
     db.getById(id).then(data => {
-      if (data.length === 0) {
+      if (data === undefined || data.length === 0) {
         return res.status(400).json({
           message: "invalid post id"
         });
