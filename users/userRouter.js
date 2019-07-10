@@ -33,14 +33,22 @@ router.get("/:id", (req, res) => {});
 
 router.get("/:id/posts", (req, res) => {});
 
-router.delete("/:id", (req, res) => {
-    
+router.delete("/:id", validateUserId, (req, res) => {
+  try {
+    db.remove(req.user).then(data => {
+      return res.status(200).json({
+        data: data
+      });
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 });
 
 router.put("/:id", validateUserId, validateUser, (req, res) => {
   try {
     db.update(req.user, req.body).then(data => {
-      return res.status(201).json({
+      return res.status(200).json({
         data: data
       });
     });
@@ -60,7 +68,7 @@ function validateUserId(req, res, next) {
   }
   try {
     db.getById(id).then(data => {
-      if (data.length === 0) {
+      if (data === undefined || data.length === 0 ) {
         return res.status(400).json({
           message: "invalid user id"
         });
